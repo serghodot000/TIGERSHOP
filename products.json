@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "name": "Плащ вощёный, тёмно-оливковый",
+    "category": "Верхняя одежда",
+    "price": 8900,
+    "in_stock": true,
+    "image": "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600&q=80"
+  },
+  {
+    "id": 2,
+    "name": "Свитер из шерсти мериноса",
+    "category": "Трикотаж",
+    "price": 5400,
+    "in_stock": true,
+    "image": "https://images.unsplash.com/photo-1614975059251-992f11792b9f?w=600&q=80"
+  },
+  {
+    "id": 3,
+    "name": "Рубашка льняная, песочная",
+    "category": "Рубашки",
+    "price": 3200,
+    "in_stock": false,
+    "image": "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600&q=80"
+  },
+  {
+    "id": 4,
+    "name": "Брюки прямого кроя, графит",
+    "category": "Низ",
+    "price": 4600,
+    "in_stock": true,
+    "image": "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=600&q=80"
+  },
+  {
+    "id": 5,
+    "name": "Ботинки кожаные на рифлёной подошве",
+    "category": "Обувь",
+    "price": 12500,
+    "in_stock": true,
+    "image": "https://images.unsplash.com/photo-1520639888713-7851133b1ed0?w=600&q=80"
+  },
+  {
+    "id": 6,
+    "name": "Шарф шерстяной, клетка",
+    "category": "Аксессуары",
+    "price": 2100,
+    "in_stock": false,
+    "image": "https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?w=600&q=80"
+  }
+]
