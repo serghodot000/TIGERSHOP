@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Каталог</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #F7F6F2;
+    --ink: #201E1B;
+    --ink-soft: #6B675F;
+    --line: #E3DFD5;
+    --navy: #2B3A67;
+    --mustard: #D9A441;
+    --grey-out: #A9A49B;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  header{
+    padding:20px 18px 12px;
+    position:sticky;
+    top:0;
+    background:var(--bg);
+    z-index:5;
+    border-bottom:1px solid var(--line);
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:26px;
+    margin:0 0 4px;
+    letter-spacing:-0.01em;
+  }
+  .sub{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin:0 0 16px;
+  }
+  .chips{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding-bottom:4px;
+    scrollbar-width:none;
+  }
+  .chips::-webkit-scrollbar{display:none;}
+  .chip{
+    flex:0 0 auto;
+    padding:7px 14px;
+    border:1px solid var(--line);
+    border-radius:999px;
+    font-size:13px;
+    color:var(--ink-soft);
+    background:transparent;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .chip.active{
+    background:var(--navy);
+    border-color:var(--navy);
+    color:#fff;
+  }
+  main{
+    padding:8px 18px 32px;
+  }
+  .item{
+    display:flex;
+    gap:14px;
+    padding:18px 0;
+    border-bottom:1px solid var(--line);
+    align-items:stretch;
+  }
+  .item:last-child{border-bottom:none;}
+  .thumb{
+    width:96px;
+    height:120px;
+    flex:0 0 auto;
+    background:#EAE7DE;
+    border-radius:3px;
+    overflow:hidden;
+    position:relative;
+  }
+  .thumb img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .tag{
+    position:absolute;
+    top:6px;
+    left:0;
+    background:var(--mustard);
+    color:#201E1B;
+    font-size:10px;
+    font-weight:600;
+    padding:2px 7px;
+  }
+  .tag.out{
+    background:var(--grey-out);
+    color:#fff;
+  }
+  .info{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    min-width:0;
+  }
+  .cat{
+    font-size:11px;
+    color:var(--ink-soft);
+    margin-bottom:4px;
+  }
+  .name{
+    font-family:'Fraunces', serif;
+    font-size:17px;
+    font-weight:500;
+    line-height:1.25;
+    margin:0 0 8px;
+  }
+  .price{
+    font-size:15px;
+    font-weight:600;
+    color:var(--navy);
+  }
+  .price.out{
+    color:var(--grey-out);
+  }
+  .status{
+    font-size:12px;
+    color:var(--grey-out);
+    margin-top:2px;
+  }
+  .empty{
+    text-align:center;
+    padding:60px 20px;
+    color:var(--ink-soft);
+    font-size:14px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Каталог</h1>
+  <p class="sub" id="count">загрузка…</p>
+  <div class="chips" id="chips"></div>
+</header>
+
+<main id="list"></main>
+
+<script>
+  const tg = window.Telegram?.WebApp;
+  if (tg) { tg.ready(); tg.expand(); }
+
+  let products = [];
+  let activeCategory = 'Все';
+
+  async function load() {
+    const res = await fetch('products.json');
+    products = await res.json();
+    renderChips();
+    renderList();
+  }
+
+  function renderChips() {
+    const cats = ['Все', ...new Set(products.map(p => p.category))];
+    const wrap = document.getElementById('chips');
+    wrap.innerHTML = '';
+    cats.forEach(cat => {
+      const chip = document.createElement('button');
+      chip.className = 'chip' + (cat === activeCategory ? ' active' : '');
+      chip.textContent = cat;
+      chip.onclick = () => { activeCategory = cat; renderChips(); renderList(); };
+      wrap.appendChild(chip);
+    });
+  }
+
+  function renderList() {
+    const list = document.getElementById('list');
+    const filtered = activeCategory === 'Все'
+      ? products
+      : products.filter(p => p.category === activeCategory);
+
+    document.getElementById('count').textContent =
+      filtered.length + (filtered.length === 1 ? ' товар' : ' товаров');
+
+    if (filtered.length === 0) {
+      list.innerHTML = '<div class="empty">В этой категории пока пусто</div>';
+      return;
+    }
+
+    list.innerHTML = filtered.map(p => `
+      <div class="item">
+        <div class="thumb">
+          <img src="${p.image}" alt="${p.name}" loading="lazy">
+          <span class="tag ${p.in_stock ? '' : 'out'}">${p.in_stock ? 'В наличии' : 'Нет в наличии'}</span>
+        </div>
+        <div class="info">
+          <div class="cat">${p.category}</div>
+          <div class="name">${p.name}</div>
+          <div class="price ${p.in_stock ? '' : 'out'}">${p.price.toLocaleString('ru-RU')} ₽</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  load();
+</script>
+
+</body>
+</html>
